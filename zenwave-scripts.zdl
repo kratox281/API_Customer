@@ -1,0 +1,58 @@
+config {
+    title "Customer with Addresses"
+    basePackage "com.example.customer"
+    persistence jpa
+    databaseType postgresql
+
+
+    specFile "zenwave-model.zdl"
+    zdlFile "zenwave-model.zdl"
+
+
+    // these should match the values of openapi-generator-maven-plugin
+    // used by the OpenAPIControllersPlugin and SpringWebTestClientPlugin
+    openApiApiPackage "{{basePackage}}.adapters.web"
+    openApiModelPackage "{{basePackage}}.adapters.web.model"
+    openApiModelNameSuffix DTO
+
+
+    plugins {
+
+        ZDLToOpenAPIPlugin {
+            idType integer
+            idTypeFormat int64
+            targetFile "src/main/resources/public/apis/openapi.yml"
+        }
+        BackendApplicationDefaultPlugin {
+            useLombok true
+            includeEmitEventsImplementation false
+            // --force // overwite all files
+        }
+
+        OpenAPIControllersPlugin {
+            openapiFile "src/main/resources/public/apis/openapi.yml"
+        }
+
+        SpringWebTestClientPlugin {
+            openapiFile "src/main/resources/public/apis/openapi.yml"
+        }
+
+        SpringWebTestClientPlugin {
+            openapiFile "src/main/resources/public/apis/openapi.yml"
+            groupBy businessFlow
+            businessFlowTestName CreateUpdateDeleteCustomerIntegrationTest
+            operationIds createCustomer,updateCustomer,deleteCustomer,getCustomer
+        }
+
+        OpenAPIKaratePlugin {
+            openapiFile "src/main/resources/public/apis/openapi.yml"
+        }
+
+        OpenAPIKaratePlugin {
+            openapiFile "src/main/resources/public/apis/openapi.yml"
+            groupBy businessFlow
+            businessFlowTestName CreateUpdateDeleteCustomerKarateTest
+            operationIds createCustomer,updateCustomer,deleteCustomer,getCustomer
+        }
+    }
+}
